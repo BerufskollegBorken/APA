@@ -1,0 +1,12 @@
+U:\Source\Repos\APA\APA\bin\Debug\Absentismus.exe.config
+U:\Source\Repos\APA\APA\bin\Debug\Absentismus.exe
+U:\Source\Repos\APA\APA\bin\Debug\Absentismus.pdb
+U:\Source\Repos\APA\APA\bin\Debug\Microsoft.Exchange.WebServices.Auth.dll
+U:\Source\Repos\APA\APA\bin\Debug\Microsoft.Exchange.WebServices.dll
+U:\Source\Repos\APA\APA\bin\Debug\Microsoft.Exchange.WebServices.pdb
+U:\Source\Repos\APA\APA\bin\Debug\Microsoft.Exchange.WebServices.xml
+U:\Source\Repos\APA\APA\bin\Debug\Microsoft.Exchange.WebServices.Auth.pdb
+U:\Source\Repos\APA\APA\bin\Debug\Microsoft.Exchange.WebServices.Auth.xml
+U:\Source\Repos\APA\APA\obj\Debug\APA.csprojResolveAssemblyReference.cache
+U:\Source\Repos\APA\APA\obj\Debug\Absentismus.exe
+U:\Source\Repos\APA\APA\obj\Debug\Absentismus.pdb
