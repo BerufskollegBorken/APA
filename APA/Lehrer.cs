@@ -1,4 +1,8 @@
-﻿namespace APA
+﻿using Microsoft.Exchange.WebServices.Data;
+using System;
+using System.Collections.Generic;
+
+namespace APA
 {
     public class Lehrer
     {
@@ -25,6 +29,51 @@
 
         public Lehrer()
         {
+        }
+
+        internal void Mailen(List<Schueler> schuelerOhneNoten)
+        {
+            ExchangeService exchangeService = new ExchangeService()
+            {
+                UseDefaultCredentials = true,
+                TraceEnabled = false,
+                TraceFlags = TraceFlags.All,
+                Url = new Uri("https://ex01.bkb.local/EWS/Exchange.asmx")
+            };
+            EmailMessage message = new EmailMessage(exchangeService);
+
+            
+            message.ToRecipients.Add(this.Mail);
+            
+            message.BccRecipients.Add("stefan.baeumer@berufskolleg-borken.de");
+
+            message.Subject = "Fehlende Vornoten";
+
+            message.Body = @"Guten Tag " + this.Vorname + " " + this.Nachname +"," +
+                "<br>" +
+                "Sie erhalten diese Mail, weil für folgende Schülerinnen und Schüler bisher keine Vornoten eingetragen wurden:" +
+                "<br><table>";
+
+            foreach (var schueler in schuelerOhneNoten)
+            {
+                foreach (var fach in schueler.Fächer)
+                {
+                    if (fach.Lehrerkürzel == this.Kürzel)
+                    {
+                        if (fach.Note == null || fach.Note == "")
+                        {
+                            message.Body += "<tr><td>" + schueler.Vorname + " " + schueler.Nachname.Substring(0, 1) + "</t><td>" + schueler.Klasse.NameUntis + "</td><td>" + fach.KürzelUntis + "</td></tr>";
+                        }
+                    }                    
+                }                
+            }
+
+            message.Body += @"</table>
+<br>Bitte holen Sie die Eintragungen bis spätestens " + DateTime.Now.AddHours(24).ToShortDateString() + "um 24 Uhr im Digitalen Klassenbuch nach.<br><br>Mit kollegialem Gruß<br>Stefan Bäumer";
+
+            //message.SendAndSaveCopy();
+            message.Save(WellKnownFolderName.Drafts);
+            Console.WriteLine("            " + message.Subject + " " + this.Kürzel + " ... per Mail gesendet.");
         }
     }
 }
