@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.IO;
+using System.Net.Mail;
 
 namespace APA
 {
@@ -41,6 +42,85 @@ namespace APA
             Environment.Exit(0);
         }
 
+        public static string NotenUmrechnen(string note)
+        {
+            if (note == "15.0")
+            {
+                return "1+";
+            }
+            if (note == "14.0")
+            {
+                return "1";
+            }
+            if (note == "13.0")
+            {
+                return "1-";
+            }
+            if (note == "12.0")
+            {
+                return "2+";
+            }
+            if (note == "11.0")
+            {
+                return "2";
+            }
+            if (note == "10.0")
+            {
+                return "2-";
+            }
+            if (note == "9.0")
+            {
+                return "3+";
+            }
+            if (note == "8.0")
+            {
+                return "3";
+            }
+            if (note == "7.0")
+            {
+                return "3-";
+            }
+            if (note == "6.0")
+            {
+                return "4+";
+            }
+            if (note == "5.0")
+            {
+                return "4";
+            }
+            if (note == "4.0")
+            {
+                return "4-";
+            }
+            if (note == "3.0")
+            {
+                return "5+";
+            }
+            if (note == "2.0")
+            {
+                return "5";
+            }
+            if (note == "1.0")
+            {
+                return "5-";
+            }
+            if (note == "81.0")
+            {
+                return "Attest";
+            }
+            if (note == "99.0")
+            {
+                return "k.N.";
+            }
+            if (note == "0.0")
+            {
+                return "6";
+            }
+            Console.WriteLine("Fehler! Note nicht definiert!");
+            Console.ReadKey();
+            return "";
+        }
+                
         public static string ConU = @"Provider = Microsoft.Jet.OLEDB.4.0; Data Source=M:\\Data\\gpUntis.mdb;";
 
         public static string AdminMail { get; internal set; }
@@ -85,6 +165,34 @@ namespace APA
             if (!reader.IsDBNull(colIndex))
                 return reader.GetString(colIndex);
             return string.Empty;
+        }
+
+
+        internal static void MailSenden(List<Lehrer> klassenleitungen, string subject, string body, string dateiname, byte[] attach)
+        {
+            ExchangeService exchangeService = new ExchangeService()
+            {
+                UseDefaultCredentials = true,
+                TraceEnabled = false,
+                TraceFlags = TraceFlags.All,
+                Url = new Uri("https://ex01.bkb.local/EWS/Exchange.asmx")
+            };
+            EmailMessage message = new EmailMessage(exchangeService);
+
+            foreach (var item in klassenleitungen)
+            {
+                message.ToRecipients.Add(item.Mail);
+            }
+                        
+            message.Subject = subject;
+
+            message.Body = body;
+            message.Attachments.AddFileAttachment(dateiname, attach);
+            
+            //message.SendAndSaveCopy();
+            message.Save(WellKnownFolderName.Drafts);
+            Console.WriteLine("            ... per Mail gesendet.");
+            Console.ReadKey();
         }
 
         internal static void MailSenden(Klasse to, string subject, string body, List<string> fileNames)

@@ -36,7 +36,7 @@ WHERE Subjects.Schoolyear_id = " + Global.AktSjUnt + " AND Subjects.Deleted=No  
                         this.Add(fach);
                     };
 
-                    Console.WriteLine(("Fächer " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(4), '.');
+                    Console.WriteLine(("Fächer " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(30), '.');
 
                     oleDbDataReader.Close();
                 }

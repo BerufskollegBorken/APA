@@ -10,3 +10,6 @@ U:\Source\Repos\APA\APA\bin\Debug\Microsoft.Exchange.WebServices.Auth.xml
 U:\Source\Repos\APA\APA\obj\Debug\APA.csprojResolveAssemblyReference.cache
 U:\Source\Repos\APA\APA\obj\Debug\Absentismus.exe
 U:\Source\Repos\APA\APA\obj\Debug\Absentismus.pdb
+U:\Source\Repos\APA\APA\bin\Debug\ICSharpCode.SharpZipLib.dll
+U:\Source\Repos\APA\APA\bin\Debug\ICSharpCode.SharpZipLib.pdb
+U:\Source\Repos\APA\APA\bin\Debug\ICSharpCode.SharpZipLib.xml

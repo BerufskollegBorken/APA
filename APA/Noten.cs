@@ -13,14 +13,15 @@ namespace APA
             using (StreamReader reader = new StreamReader(Global.InputNotenCsv))
             {
                 string überschrift = reader.ReadLine();
+                int zeile = 1;
 
                 while (true)
                 {
                     string line = reader.ReadLine();
-
+                    
                     if (line != null)
                     {
-                        Note note = new Note(line);
+                        Note note = new Note(line, zeile);
                         
                         if (note.Prüfungsart == "Jahreszeugnis")
                         {
@@ -33,6 +34,7 @@ namespace APA
                                 this.Add(note);
                             }
                         }
+                        zeile++;
                     }
 
                     if (line == null)
@@ -40,7 +42,7 @@ namespace APA
                         break;
                     }
                 }
-                Console.WriteLine(("Noten " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(4), '.');
+                Console.WriteLine(("Noten " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(30), '.');
             }
         }
     }

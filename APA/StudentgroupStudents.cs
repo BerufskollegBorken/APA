@@ -27,7 +27,8 @@ namespace APA
                         break;
                     }
                 }
-                Console.WriteLine(("StudentgroupStudents " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(4), '.');
+                Console.WriteLine(("StudentgroupStudents " + ".".PadRight(this.Count / 500, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(30), '.');
+                
             }
         }
     }

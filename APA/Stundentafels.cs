@@ -58,7 +58,7 @@ WHERE (((PeriodsTable.SCHOOLYEAR_ID)=" + Global.AktSjUnt + ") AND ((PeriodsTable
                         this.Add(stundentafel);
                     }                    
                 };
-                Console.WriteLine(("Stundentafeln " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(4), '.');
+                Console.WriteLine(("Stundentafeln " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(30), '.');
                 oleDbDataReader.Close();
                 oleDbConnection.Close();
             }

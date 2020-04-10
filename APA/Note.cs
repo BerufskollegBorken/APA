@@ -14,27 +14,27 @@ namespace APA
         public string Fach { get; private set; }
         public object Lernbereich { get; internal set; }
 
-        public Note(string line)
+        public Note(string line, int zeile)
         {
-            var x = line.Split('\t');
-            Datum = GetDatum(x[0]);
-            Klasse = x[2];
-            Fach = x[3];
-            Prüfungsart = x[4];
-            PrüfungsartNote = x[5];
             try
             {
-                LehrerKürzel = x[7];
-            }
-            catch (Exception)
-            {
+                var x = line.Split('\t');
+                Datum = GetDatum(x[0]);
+                Klasse = x[2];
+                Fach = x[3];
+                Prüfungsart = x[4];
+                PrüfungsartNote = Global.NotenUmrechnen(x[5]);
 
-                throw;
+                LehrerKürzel = x[7];
+                StudentId = Convert.ToInt32(x[8]);
             }
-            
-            StudentId = Convert.ToInt32(x[8]);            
+            catch (Exception ex)
+            {
+                Console.WriteLine("Fehler in der Datei MarksPerLesson in Zeile " + zeile + ".\n\n" + ex.ToString());
+                Console.ReadKey();
+            }
         }
-                
+        
         private DateTime GetDatum(string datumString)
         {
             return DateTime.ParseExact(datumString, "dd.MM.yyyy", CultureInfo.InvariantCulture);

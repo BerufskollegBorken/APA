@@ -27,7 +27,7 @@ namespace APA
                         break;
                     }
                 }
-                Console.WriteLine(("ExportLessons " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(4), '.');
+                Console.WriteLine(("ExportLessons " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(30), '.');
             }
         }
     }

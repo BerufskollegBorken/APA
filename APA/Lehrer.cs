@@ -31,7 +31,7 @@ namespace APA
         {
         }
 
-        internal void Mailen(List<Schueler> schuelerOhneNoten)
+        internal void Mailen(List<Schueler> schuelerOhneNoten, List<Schueler> schuelerMitDoppelterNote)
         {
             ExchangeService exchangeService = new ExchangeService()
             {
