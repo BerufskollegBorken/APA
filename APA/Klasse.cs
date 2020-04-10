@@ -127,16 +127,15 @@ namespace APA
             Global.MailSenden(
                 this, 
                 "Notenliste " + NameUntis + " für " + kla ,
-                @"Guten Morgen " + kla + @"<br>
-anbei die Liste mit den Noten Ihrer Klasse.
+                @"Guten Morgen " + kla + @"<br><br>
+zur Vorbereitung auf die Zulasungskonferenz der Klasse " + NameUntis + @" am 21.4.20 erhalten Sie die Liste der Noten Ihrer Klasse.
 <br>
 <br>
-Dazu folgende Hinweise:
-<ul>
-<li>Es werden alle Fächer angezeigt, die seit dem Schuljahresbeginn unterricht wurden. Das schließt auch diejenigen Fächer ein, die z.B. in der zweiten Woche nach den Ferien ersatzlos gestrichen wurden. Als Klassenleitung wissen Sie, welche Fächer das betrifft und können dem APA das Fehlen von Noten entsprechend erklären.</li>
-<li>Tragen Sie als Klassenleitung Sorge dafür, dass alle Kolleginnen und Kollegen, die noch Noten eintragen müssen, das noch diese Woche tun. Parallel werden auch Mails direkt verschickt. Am Sonntag um 24 Uhr wird die Änderung / Neueingabe gesperrt.</li>
-</ul>
-Aus Datenschutzgründen kann die Liste natürlich nicht unverschlüsselt gesendet werden. Das Kennwort ist unsere leicht abgewandelte Schulnummer. Sie finden das Kennwort <a href='https://bk-borken.lms.schulon.org/course/view.php?id=415'>hier</a>. <br><br>Frohe Ostern<br><br>Stefan Bäumer<br><br>PS: Weil diese Mail samt Inhalt automatisch erstellt und versandt wurde, ist der (angekündigte) Versand der Liste über der Messenger nicht möglich gewesen.", new List<string>() { Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".zip" });
+Ihre Aufgabe ist es, fehlende Noten bei den Fachkolleginnen und Fachkollegen anzufordern. Die Noten müssen dann von der jeweiligen Lehrkraft bis spätestens 13.4.20 im DigiKlas eingetragen werden. Parallel zu Ihren Bemühungen werden automatisch Mails mit der Aufforderung zur Eintragung  verschickt. Am 13.4.20 um 24 Uhr wird die Änderung- / Neueingabemöglichkeit gesperrt.
+<br>
+Es werden Ihnen in der Liste alle Fächer angezeigt, die seit dem Schuljahresbeginn unterricht wurden. Das schließt auch diejenigen Fächer ein, die z.B. in der zweiten Woche nach den Ferien ersatzlos gestrichen wurden. Als Klassenleitung wissen Sie, wo entsprechend keine Noten erforderlich sind und wo noch Noten fehlen.
+
+Aus Datenschutzgründen kann die Liste natürlich nicht unverschlüsselt gesendet werden. Das Kennwort ist unsere leicht abgewandelte Schulnummer. Sie finden das Kennwort <a href='https://bk-borken.lms.schulon.org/course/view.php?id=415'>hier</a>. <br><br>Frohe Ostern<br><br>Stefan Bäumer<br><br>PS: Weil diese Mail samt Inhalt automatisch erstellt und versandt wurde, ist der (angekündigte) Versand der Liste über den Messenger so nicht möglich.", new List<string>() { Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".zip" });
 
             Console.WriteLine(" ... ok");
         }

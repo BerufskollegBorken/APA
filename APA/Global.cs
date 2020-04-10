@@ -166,8 +166,7 @@ namespace APA
                 return reader.GetString(colIndex);
             return string.Empty;
         }
-
-
+        
         internal static void MailSenden(List<Lehrer> klassenleitungen, string subject, string body, string dateiname, byte[] attach)
         {
             ExchangeService exchangeService = new ExchangeService()
@@ -210,7 +209,6 @@ namespace APA
             {
                 if (item.Mail != null && item.Mail != "")
                 {
-                    //message.ToRecipients.Add("baeumer@posteo.de");
                     message.ToRecipients.Add(item.Mail);
                 }                
             }
@@ -227,8 +225,7 @@ namespace APA
             }
             
             //message.SendAndSaveCopy();
-            message.Save(WellKnownFolderName.Drafts);
-            Console.WriteLine("            " + subject + " ... per Mail gesendet.");
+            message.Save(WellKnownFolderName.Drafts);            
         }
     }
 }
