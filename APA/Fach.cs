@@ -23,7 +23,7 @@ namespace APA
                 {
                     if (klasse.StartsWith(s.Bezeichnung))
                     {
-                        Nummer = s.Position1;
+                        Nummer = s.Position1 == 0 ? 99 : s.Position1;
                         break;
                     }
                 }

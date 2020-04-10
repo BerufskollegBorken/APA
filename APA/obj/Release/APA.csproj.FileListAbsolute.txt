@@ -1,0 +1,5 @@
+\\fs01\Schulverwaltung\APA\Absentismus.exe.config
+\\fs01\Schulverwaltung\APA\Absentismus.exe
+\\fs01\Schulverwaltung\APA\Absentismus.pdb
+U:\Source\Repos\APA\APA\obj\Release\Absentismus.exe
+U:\Source\Repos\APA\APA\obj\Release\Absentismus.pdb

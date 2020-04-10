@@ -1,6 +1,7 @@
 ﻿using Microsoft.Exchange.WebServices.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace APA
 {
@@ -41,8 +42,7 @@ namespace APA
                 Url = new Uri("https://ex01.bkb.local/EWS/Exchange.asmx")
             };
             EmailMessage message = new EmailMessage(exchangeService);
-
-            
+                        
             message.ToRecipients.Add(this.Mail);
             
             message.BccRecipients.Add("stefan.baeumer@berufskolleg-borken.de");
@@ -54,7 +54,7 @@ namespace APA
                 "Sie erhalten diese Mail, weil für folgende Schülerinnen und Schüler bisher keine Vornoten eingetragen wurden:" +
                 "<br><table>";
 
-            foreach (var schueler in schuelerOhneNoten)
+            foreach (var schueler in (from ss in schuelerOhneNoten select ss).OrderBy(x=>x.Klasse).ThenBy(x=>x.Nachname))
             {
                 foreach (var fach in schueler.Fächer)
                 {
@@ -69,7 +69,7 @@ namespace APA
             }
 
             message.Body += @"</table>
-<br>Bitte holen Sie die Eintragungen bis spätestens " + DateTime.Now.AddHours(24).ToShortDateString() + "um 24 Uhr im Digitalen Klassenbuch nach.<br><br>Mit kollegialem Gruß<br>Stefan Bäumer";
+<br>Sofern Sie noch eintragen müssen, holen Sie das bis spätestens 13.04.20 um 24 Uhr im Digitalen Klassenbuch nach.<br><br>Mit kollegialem Gruß<br>Stefan Bäumer";
 
             //message.SendAndSaveCopy();
             message.Save(WellKnownFolderName.Drafts);

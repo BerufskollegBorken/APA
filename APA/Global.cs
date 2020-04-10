@@ -13,7 +13,8 @@ namespace APA
         public static string InputExportLessons = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\ExportLessons.csv";
         public static string InputStudentgroupStudentsCsv = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\StudentgroupStudents.csv";
 
-        public static string ConAtl = @"Dsn=Atlantis9;uid=DBA";
+        public static string ConAtl = @"Dsn=Atlantis9;uid=
+";
 
         internal static void IstInputNotenCsvVorhanden()
         {
