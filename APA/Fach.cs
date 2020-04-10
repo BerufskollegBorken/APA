@@ -8,10 +8,10 @@ namespace APA
         {
         }
 
-        public Fach(int id, string klasse, string subject, Noten noten, Sortierung sortierung)
+        public Fach(int id, string klasse, string subject, string lehrerkürzel, Noten noten, Sortierung sortierung)
         {
             KürzelUntis = subject;
-
+            Lehrerkürzel = lehrerkürzel;
             Note = (from n in noten
                     where n.Fach == KürzelUntis
                     where n.StudentId == id
@@ -50,5 +50,6 @@ namespace APA
         public int Position1 { get; internal set; }
         public int Position2 { get; internal set; }
         public string Bezeichnung { get; internal set; }
+        public string Lehrerkürzel { get; private set; }
     }
 }

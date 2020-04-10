@@ -47,7 +47,7 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "' AND info_gruppe = 'STRAF' AN
                     }
 
                     connection.Close();
-                    Console.WriteLine(("Maßnahmen " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(4), '.');
+                    Console.WriteLine(("Maßnahmen " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(30), '.');
                 }
             }
             catch (Exception ex)

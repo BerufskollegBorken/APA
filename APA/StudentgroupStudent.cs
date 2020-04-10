@@ -9,7 +9,7 @@ namespace APA
         public int StudentId { get; private set; }
         public string Forename { get; private set; }
         public string Name { get; private set; }
-        public object Studentgroup { get; private set; }
+        public string Studentgroup { get; private set; }
         public string Subject { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }

@@ -59,7 +59,7 @@ WHERE (((SCHOOLYEAR_ID)= " + Global.AktSjUnt + ") AND  ((TERM_ID)=" + periodes.C
                         this.Add(lehrer);
                     };
 
-                    Console.WriteLine(("Lehrer " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(4), '.');
+                    Console.WriteLine(("Lehrer " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(30), '.');
 
                     oleDbDataReader.Close();
                 }
@@ -71,6 +71,49 @@ WHERE (((SCHOOLYEAR_ID)= " + Global.AktSjUnt + ") AND  ((TERM_ID)=" + periodes.C
                 {
                     oleDbConnection.Close();
                 }
+            }
+        }
+
+        internal void FehlendeUndDoppelteEinträge(Schuelers schuelers)
+        {
+            foreach (var lehrer in this)
+            {
+                if (lehrer.Kürzel == "STA")
+                {
+                        string aa = "";
+                }
+                if (lehrer.Mail != null && lehrer.Mail != "")
+                {
+                    var schuelerOhneNoten = (from s in schuelers
+                                             from f in s.Fächer
+                                             where f.Note == null || f.Note == ""
+                                             where f.Lehrerkürzel == lehrer.Kürzel
+                                             select s).ToList();
+
+                    List<Schueler> schuelerMitDoppelterNote = new List<Schueler>();
+
+                    // Fpr jeden Schüler dieses Lehrers wird geprüft, ob das selbe Fach 2x bewertet wurde.
+
+                    //foreach (var s in (from s in schuelers from f in s.Fächer where f.Lehrerkürzel == lehrer.Kürzel select s).ToList())
+                    //{
+                    //    if (s.Nachname == "Bröker")
+                    //    {
+                            
+                    //    }
+                    //    foreach (var f in (from f in s.Fächer where f.Lehrerkürzel == lehrer.Kürzel select f.KürzelUntis).Distinct().ToList())
+                    //    {
+                    //        if ((from ff in s.Fächer where ff.KürzelUntis == f select ff).Count() > 1)
+                    //        {
+                    //            schuelerMitDoppelterNote.Add(s);
+                    //        }
+                    //    }
+                    //}
+                    
+                    if (schuelerOhneNoten.Count > 0)
+                    {
+                        lehrer.Mailen(schuelerOhneNoten, schuelerMitDoppelterNote);
+                    }
+                }                
             }
         }
     }

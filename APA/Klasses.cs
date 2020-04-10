@@ -71,7 +71,7 @@ WHERE (((Class.SCHOOL_ID)=177659) AND ((Class.TERM_ID)=" + periodes.Count + ") A
                         }                       
                     };
 
-                    Console.WriteLine(("Klassen " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(4), '.');
+                    Console.WriteLine(("Klassen " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(30), '.');
 
                     oleDbDataReader.Close();
                 }
@@ -91,7 +91,7 @@ WHERE (((Class.SCHOOL_ID)=177659) AND ((Class.TERM_ID)=" + periodes.Count + ") A
         {
         }
 
-        internal void Notenlisten(Schuelers schuelers)
+        internal void Notenlisten(Schuelers schuelers, Lehrers lehrers)
         {
             string quelle = "APA.xlsx";
             
@@ -104,7 +104,7 @@ WHERE (((Class.SCHOOL_ID)=177659) AND ((Class.TERM_ID)=" + periodes.Count + ") A
             {
                 klasse.Notenliste(application, workbook, (from s in schuelers
                                                           where s.Klasse.NameUntis == klasse.NameUntis
-                                                          select s).ToList());
+                                                          select s).ToList(), lehrers);
             }
             workbook.Save();
             workbook.Close();

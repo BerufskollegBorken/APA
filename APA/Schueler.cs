@@ -93,7 +93,6 @@ namespace APA
         public Adresse Adresse { get; private set; }
         
         public DateTime Bildungsgangeintrittsdatum { get; private set; }
-        public Feriens Feriens { get; private set; }
         public int AktSj { get; private set; }
         public Unterrichte Unterrichte { get; internal set; }
         public List<Fach> Fächer { get; internal set; }

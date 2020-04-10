@@ -1,4 +1,6 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.IO;
 
@@ -16,16 +18,14 @@ namespace APA
 
                 Global.IstInputNotenCsvVorhanden();
                 
-                //var frns = new Feriens();
                 var prds = new Periodes();
                 var fchs = new Fachs();
-                //var rams = new Raums(prds);
                 var lehs = new Lehrers(prds);
                 var klss = new Klasses(lehs, prds);
-                //var unts = new Unterrichts(prds.AktuellePeriode, klss, lehs, fchs, rams);
                 var schuelers = new Schuelers(klss, lehs);                
-                schuelers.Unterrichte();               
-                klss.Notenlisten(schuelers);
+                schuelers.Unterrichte();                  
+                klss.Notenlisten(schuelers, lehs);
+                lehs.FehlendeUndDoppelteEinträge(schuelers);
                 Console.WriteLine("Fertig");
                 System.Diagnostics.Process.Start(Global.Ziel);
             }
@@ -45,6 +45,7 @@ namespace APA
             }
         }
 
+                
         private static bool DateiGöffnet(string inputAbwesenheitenCsv)
         {
             try

@@ -70,7 +70,7 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
                 }
 
                 connection.Close();
-                Console.WriteLine(("Schüler " + ".".PadRight(this.Count / 150, '.')).PadRight(47, '.') + (" " + this.Count).ToString().PadLeft(4), '.');
+                Console.WriteLine(("Schüler " + ".".PadRight(this.Count / 150, '.')).PadRight(48, '.') + (" " + this.Count).ToString().PadLeft(30), '.');
             }
         }
 
@@ -92,6 +92,7 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
                                               schueler.Id,
                                               schueler.Klasse.NameUntis,
                                               e.Subject,
+                                              e.Teacher,
                                               noten, 
                                               sortierung
                                           )
@@ -100,12 +101,15 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
 
                 // Alle Gruppen werden zu Unterrichten
                 schueler.Fächer.AddRange((from s in studentgroupStudents
-                                          where s.StudentId == schueler.Id
+                                          where s.StudentId == schueler.Id                                          
                                           select new Fach
                                           (
                                               schueler.Id,
                                               schueler.Klasse.NameUntis,
                                               s.Subject,
+                                              (from e in exportLessons
+                                               where e.Studentgroup == s.Studentgroup
+                                               select e.Teacher).FirstOrDefault(),
                                               noten,
                                               sortierung
                                           )).ToList());
