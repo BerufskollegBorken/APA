@@ -53,21 +53,32 @@ namespace APA
                 "<br>" +
                 "Sie erhalten diese Mail, weil für folgende Schülerinnen und Schüler bisher keine Vornoten eingetragen wurden:" +
                 "<br><table>";
-
-            foreach (var schueler in (from ss in schuelerOhneNoten select ss).OrderBy(x=>x.Klasse).ThenBy(x=>x.Nachname))
+            if (this.Vorname == "Roland")
             {
-                foreach (var fach in schueler.Fächer)
-                {
-                    if (fach.Lehrerkürzel == this.Kürzel)
-                    {
-                        if (fach.Note == null || fach.Note == "")
-                        {
-                            message.Body += "<tr><td>" + schueler.Vorname + " " + schueler.Nachname.Substring(0, 1) + "</t><td>" + schueler.Klasse.NameUntis + "</td><td>" + fach.KürzelUntis + "</td></tr>";
-                        }
-                    }                    
-                }                
+                string a = "";
             }
+            try
+            {
+                foreach (var schueler in (from ss in schuelerOhneNoten select ss).OrderBy(x => x.Klasse.NameUntis).ThenBy(x => x.Nachname))
+                {
+                    foreach (var fach in schueler.Fächer)
+                    {
+                        if (fach.Lehrerkürzel == this.Kürzel)
+                        {
+                            if (fach.Note == null || fach.Note == "")
+                            {
+                                message.Body += "<tr><td>" + schueler.Vorname + " " + schueler.Nachname.Substring(0, 1) + "</t><td>" + schueler.Klasse.NameUntis + "</td><td>" + fach.KürzelUntis + "</td></tr>";
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
 
+                throw;
+            }
+            
             message.Body += @"</table>
 <br>Sofern Sie noch eintragen müssen, holen Sie das bis spätestens 13.04.20 um 24 Uhr im Digitalen Klassenbuch nach.<br><br>Mit kollegialem Gruß<br>Stefan Bäumer";
 

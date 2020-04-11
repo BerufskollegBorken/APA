@@ -23,7 +23,7 @@ namespace APA
                 Klasse = x[2];
                 Fach = x[3];
                 Prüfungsart = x[4];
-                PrüfungsartNote = Global.NotenUmrechnen(x[5]);
+                PrüfungsartNote = Global.NotenUmrechnen(Klasse, x[5]);
 
                 LehrerKürzel = x[7];
                 StudentId = Convert.ToInt32(x[8]);

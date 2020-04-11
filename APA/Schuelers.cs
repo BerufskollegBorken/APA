@@ -79,43 +79,155 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
             ExportLessons exportLessons = new ExportLessons();
             StudentgroupStudents studentgroupStudents = new StudentgroupStudents();
             Noten noten = new Noten();
+                        
             Sortierung sortierung = new Sortierung();
 
             foreach (var schueler in this)
-            {
+            {                
                 // Alle Unterrichte ohne Studentgroup seiner Klasse werden zugeordnet
-                schueler.Fächer.AddRange((from e in exportLessons
-                                          where (e.Klassen.Split('~')).Contains(schueler.Klasse.NameUntis)
-                                          where e.Studentgroup == ""
-                                          select new Fach
-                                          (
+
+                foreach (var e in exportLessons)
+                {
+                    if (e.Klassen.Split('~').Contains(schueler.Klasse.NameUntis)
+                                          && e.Teacher != null
+                                          && e.Teacher != ""
+                                          && e.Subject != null
+                                          && e.Subject != ""
+                                          && e.Studentgroup == "")
+                    {
+                        // Wenn es noch keine Note für das Fach gibt
+
+                        if (!(from n in noten
+                              where n.Fach == e.Subject
+                              where n.StudentId == schueler.Id
+                              select n).Any())
+                        {
+                            // ... und das Fach mit diesem Lehrer auch noch nicht existiert
+
+                            if (!(from s in schueler.Fächer
+                                  where s.Lehrerkürzel == e.Teacher
+                                  where s.KürzelUntis == e.Subject
+                                  select s).Any())
+                            {
+                                schueler.Fächer.Add(new Fach(
                                               schueler.Id,
                                               schueler.Klasse.NameUntis,
                                               e.Subject,
                                               e.Teacher,
-                                              noten, 
+                                              null,
                                               sortierung
-                                          )
-                                              
-                                              ).ToList());
+                                          ));
+                            }                            
+                        }
+
+                            // Wenn es mehr als eine Note für das selbe Fach vom selben Kollegen gibt.
+                            foreach (var note in (from n in noten
+                                              where n.Fach == e.Subject
+                                              where n.StudentId == schueler.Id
+                                              select n).ToList())
+                        {
+                            // ... und es das Fach mit dieser Note noch nicht gibt ...
+
+                            if (!(from s in schueler.Fächer
+                                where s.KürzelUntis == e.Subject                                
+                                where s.Note == note.PrüfungsartNote
+                                select s).Any())
+                            {
+                                // ... wird es erneut angelegt
+
+                                if (!(from f in schueler.Fächer
+                                      where f.KürzelUntis == note.Fach
+                                      where f.Lehrerkürzel == note.LehrerKürzel
+                                      where f.Note == note.PrüfungsartNote
+                                      select f).Any())
+                                {
+                                    schueler.Fächer.Add(new Fach(
+                                              schueler.Id,
+                                              schueler.Klasse.NameUntis,
+                                              e.Subject,
+                                              e.Teacher,
+                                              note,
+                                              sortierung
+                                          ));
+                                }                                
+                            }                            
+                        }
+                    }
+                }
 
                 // Alle Gruppen werden zu Unterrichten
-                schueler.Fächer.AddRange((from s in studentgroupStudents
-                                          where s.StudentId == schueler.Id                                          
-                                          select new Fach
-                                          (
+
+                foreach (var s in studentgroupStudents)
+                {
+                    if (s.StudentId == schueler.Id
+                                          && s.Subject != null
+                                          && s.Subject != "")
+                    {
+                        // Wenn es noch keine Note für das Fach gibt
+
+                        if (!(from n in noten
+                              where n.Fach == s.Subject
+                              where n.StudentId == schueler.Id
+                              select n).Any())
+                        {
+                            if (!(from f in schueler.Fächer
+                                  where f.Lehrerkürzel == (from e in exportLessons
+                                                           where e.Studentgroup == s.Studentgroup
+                                                           where e.Subject == s.Subject
+                                                           select e.Teacher).FirstOrDefault()
+                                  where f.KürzelUntis == s.Subject
+                                  select f).Any())
+                            {
+                                schueler.Fächer.Add(new Fach(
                                               schueler.Id,
                                               schueler.Klasse.NameUntis,
                                               s.Subject,
                                               (from e in exportLessons
                                                where e.Studentgroup == s.Studentgroup
+                                               where e.Subject == s.Subject
                                                select e.Teacher).FirstOrDefault(),
-                                              noten,
+                                              null,
                                               sortierung
-                                          )).ToList());
+                                          ));
+                            }   
+                        }
 
+                        // Wenn es mehr als eine Note für das selbe Fach vom selben Kollegen gibt.
+                        foreach (var note in (from n in noten
+                                              where n.Fach == s.Subject
+                                              where n.StudentId == schueler.Id
+                                              select n).ToList())
+                        {
+                            // ... und es das Fach mit dieser Note noch nicht gibt wird es ...
 
+                            if (!(from f in schueler.Fächer
+                                  where f.KürzelUntis == s.Subject
+                                  where f.Note == note.PrüfungsartNote
+                                  select f).Any())
+                            {
+                                // ... sofern das Fach mit diesem Kollegen und dieser Note nicht schon existiert ...
 
+                                if (!(from f in schueler.Fächer
+                                      where f.KürzelUntis == note.Fach
+                                      where f.Lehrerkürzel == note.LehrerKürzel
+                                      where f.Note == note.PrüfungsartNote
+                                      select f).Any())
+                                {
+                                    // ... angelegt.
+
+                                    schueler.Fächer.Add(new Fach(
+                                                  schueler.Id,
+                                                  schueler.Klasse.NameUntis,
+                                                  s.Subject,
+                                                  note.LehrerKürzel,
+                                                  note,
+                                                  sortierung
+                                              ));
+                                }                                
+                            }
+                        }
+                    }
+                }                
             }
         }
     }

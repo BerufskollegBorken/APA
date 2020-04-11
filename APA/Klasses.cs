@@ -99,16 +99,25 @@ WHERE (((Class.SCHOOL_ID)=177659) AND ((Class.TERM_ID)=" + periodes.Count + ") A
 
             Application application = new Application();
             Workbook workbook = application.Workbooks.Open(Global.Ziel);
-
-            foreach (var klasse in this)
+            try
             {
-                klasse.Notenliste(application, workbook, (from s in schuelers
-                                                          where s.Klasse.NameUntis == klasse.NameUntis
-                                                          select s).ToList(), lehrers);
+                foreach (var klasse in this)
+                {
+                    klasse.Notenliste(application, workbook, (from s in schuelers
+                                                              where s.Klasse.NameUntis == klasse.NameUntis
+                                                              select s).ToList(), lehrers);
+                }
             }
-            workbook.Save();
-            workbook.Close();
-            application.Quit();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            finally
+            {
+                workbook.Save();
+                workbook.Close();
+                application.Quit();
+            }    
         }
     }
 }

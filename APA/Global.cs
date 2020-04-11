@@ -13,8 +13,7 @@ namespace APA
         public static string InputExportLessons = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\ExportLessons.csv";
         public static string InputStudentgroupStudentsCsv = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\StudentgroupStudents.csv";
 
-        public static string ConAtl = @"Dsn=Atlantis9;uid=
-";
+        public static string ConAtl = @"Dsn=Atlantis9;uid=DBA";
 
         internal static void IstInputNotenCsvVorhanden()
         {
@@ -43,8 +42,16 @@ namespace APA
             Environment.Exit(0);
         }
 
-        public static string NotenUmrechnen(string note)
+        public static string NotenUmrechnen(string klasse, string note)
         {
+            if (klasse.StartsWith("G"))
+            {
+                if (note == null || note == "")
+                {
+                    return "";
+                }
+                return note.Split('.')[0];
+            }
             if (note == "15.0")
             {
                 return "1+";
@@ -147,7 +154,7 @@ namespace APA
         public static string Titel {
             get
             {
-                return @" APA | Published under the terms of GPLv3 | Stefan Bäumer 2020 | Version 20200406\n".PadRight(50, '=');
+                return @" APA | Published under the terms of GPLv3 | Stefan Bäumer 2020 | Version 20200412".PadRight(50, '=');
             }
         }
 
@@ -155,11 +162,14 @@ namespace APA
         {
             get
             {
-                return new List<string>() { "HHO", "HBTO", "HBFGO", "BSO", "12" };
+                //return new List<string>() { "HHO", "HBTO", "HBFGO", "BSO", "12" };
+                return new List<string>() { "GE13", "GW13", "GT13" };
             }
         }
 
-        public static string Ziel = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\APA1.xlsx";
+        public static DateTime APA = new DateTime(2020, 04, 21);
+
+        public static string Ziel = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\APA-" + Global.APA.Year + Global.APA.Month + Global.APA.Day + ".xlsx";
 
         public static string SafeGetString(OleDbDataReader reader, int colIndex)
         {

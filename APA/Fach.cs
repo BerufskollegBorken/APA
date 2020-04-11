@@ -8,14 +8,11 @@ namespace APA
         {
         }
 
-        public Fach(int id, string klasse, string subject, string lehrerkürzel, Noten noten, Sortierung sortierung)
+        public Fach(int id, string klasse, string subject, string lehrerkürzel, Note note, Sortierung sortierung)
         {
             KürzelUntis = subject;
             Lehrerkürzel = lehrerkürzel;
-            Note = (from n in noten
-                    where n.Fach == KürzelUntis
-                    where n.StudentId == id
-                    select n.PrüfungsartNote).FirstOrDefault();
+            Note = note == null ? "" : note.PrüfungsartNote;
 
             foreach (var s in sortierung)
             {
@@ -27,7 +24,11 @@ namespace APA
                         break;
                     }
                 }
-            }            
+            }
+            if (Nummer == 0)
+            {
+                Nummer = 99;
+            }
         }
 
         public Fach(int nummer, string kürzelUntis, string lernbereich)

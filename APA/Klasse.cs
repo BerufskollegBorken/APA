@@ -1,5 +1,8 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Office.Interop.Excel;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using PdfSharp.Pdf.Security;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,6 +25,8 @@ namespace APA
         {
             var ms = new MemoryStream();
             TextWriter tw = new StreamWriter(ms);
+
+            Console.Write(NameUntis.PadRight(6) + ": Excel-Notenliste erzeugen ... ");
 
             Worksheet deckblatt = workbook.Worksheets.get_Item(1);
             deckblatt.Copy(Type.Missing, workbook.Sheets[workbook.Sheets.Count]);
@@ -69,7 +74,7 @@ namespace APA
             //worksheet.PageSetup.RightHeader = DateTime.Now.ToLocalTime();
 
             worksheet.Cells[1, 1] = "Klasse: " + this.NameUntis;
-            worksheet.Cells[1, 4] = "Klassenleitung: " + this.Klassenleitungen[0].Vorname + " " + this.Klassenleitungen[0].Nachname + " " + this.Klassenleitungen[0].Mail;
+            worksheet.Cells[1, 19] = "Klassenleitung: " + this.Klassenleitungen[0].Vorname + " " + this.Klassenleitungen[0].Nachname + " " + this.Klassenleitungen[0].Mail;
             worksheet.Cells[1, 19] = "Schuljahr: " + Global.AktSjAtl;
             worksheet.Cells.Font.Size = 12;
 
@@ -83,16 +88,26 @@ namespace APA
 
                 if (NameUntis == "BSO")
                 {
+                    worksheet.Cells[zeileObenLinks + 5, spalteObenlinks + 1] = "";
                     worksheet.Cells[zeileObenLinks + 6, spalteObenlinks + 1] = "";
                     worksheet.Cells[zeileObenLinks + 7, spalteObenlinks + 1] = "";
                 }
 
                 int x = 0;
 
-                foreach (var fach in (from f in schueler.Fächer where !f.KürzelUntis.EndsWith("FU") select f).OrderBy(y => y.Nummer).ToList())
+                foreach (var fach in (from f in schueler.Fächer
+                                      where f.KürzelUntis != null
+                                      where f.KürzelUntis != ""
+                                      where f.Lehrerkürzel != null
+                                      where f.Lehrerkürzel != ""
+                                      where !f.KürzelUntis.EndsWith("FU")
+                                      select f).OrderBy(y => y.Nummer).Distinct().ToList())
                 {
+                    worksheet.Cells[zeileObenLinks + 1, spalteObenlinks + 2 + x] = fach.Lehrerkürzel;
                     worksheet.Cells[zeileObenLinks + 2, spalteObenlinks + 2 + x] = fach.KürzelUntis;
-                    worksheet.Cells[zeileObenLinks + 3, spalteObenlinks + 2 + x] = fach.Note.Substring(0,Math.Min(fach.Note.Length,1));
+
+                    worksheet.Cells[zeileObenLinks + 3, spalteObenlinks + 2 + x] = fach.Note == null ? "" : fach.Note.Substring(0, Math.Min(fach.Note.Length, 1));
+                    
                     if (NameUntis.Contains("13"))
                     {
                         worksheet.Cells[zeileObenLinks + 3, spalteObenlinks + 2 + x] = fach.Note;
@@ -103,7 +118,7 @@ namespace APA
                 zeileObenLinks = zeileObenLinks + 12;
             }
 
-            Console.Write("Excel-Worksheet " + 12M + " nach PDF umwandeln");
+            Console.Write("Nach PDF umwandeln ... ");            
             worksheet.ExportAsFixedFormat(
                 XlFixedFormatType.xlTypePDF,
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis,
@@ -111,16 +126,42 @@ namespace APA
                 true,
                 true,
                 1,
-                10,
+                Math.Ceiling((Double)schuelers.Count / 4.0),  // Letzte zu druckende Worksheetseite
                 false);
 
-            Console.WriteLine(" ... ok");
-            Console.Write(NameUntis + ".pdf kompremieren");
-            CompressDirectory(
-                new List<string>() { Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".pdf" },
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\");
-            Console.WriteLine(" ... ok");
-            Console.Write(" Mail senden " + NameUntis);
+            // Passowort protect pdf
+
+            PdfDocument document = PdfReader.Open(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".pdf");
+
+            PdfSecuritySettings securitySettings = document.SecuritySettings;
+
+            // Setting one of the passwords automatically sets the security level to 
+            // PdfDocumentSecurityLevel.Encrypted128Bit.
+            securitySettings.UserPassword = "!7765Neun";
+            securitySettings.OwnerPassword = "owner";
+
+            // Don't use 40 bit encryption unless needed for compatibility reasons
+            //securitySettings.DocumentSecurityLevel = PdfDocumentSecurityLevel.Encrypted40Bit;
+
+            // Restrict some rights.
+            securitySettings.PermitAccessibilityExtractContent = false;
+            securitySettings.PermitAnnotations = false;
+            securitySettings.PermitAssembleDocument = false;
+            securitySettings.PermitExtractContent = false;
+            securitySettings.PermitFormsFill = true;
+            securitySettings.PermitFullQualityPrint = false;
+            securitySettings.PermitModifyDocument = true;
+            securitySettings.PermitPrint = false;
+
+            // Save the document...
+            document.Save(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf");
+            
+            //Console.Write("Pdf komprimieren ... ");
+            //CompressDirectory(
+            //    new List<string>() { Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".pdf" },
+            //    Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\");
+            
+            //Console.Write("Mail senden ...");
 
             string kla = "";
 
@@ -139,10 +180,15 @@ zur Vorbereitung auf die Zulassungskonferenz der Klasse " + NameUntis + @" am 21
 Ihre Aufgabe ist es, fehlende Noten bei den Fachkolleginnen und Fachkollegen anzufordern. Die Noten müssen dann von der jeweiligen Lehrkraft bis spätestens 13.4.20 im DigiKlas eingetragen werden. Parallel zu Ihren Bemühungen werden automatisch Mails mit der Aufforderung zur Eintragung  verschickt. Am 13.4.20 um 24 Uhr wird die Änderung- / Neueingabemöglichkeit gesperrt.
 <br><br>
 Es werden Ihnen in der Liste alle Fächer angezeigt, die seit dem Schuljahresbeginn unterricht wurden. Das schließt auch diejenigen Fächer ein, die z.B. in der zweiten Woche nach den Ferien ersatzlos gestrichen wurden. Als Klassenleitung wissen Sie, wo entsprechend keine Noten erforderlich sind und wo noch Noten fehlen.  
+<br><br>
+Fächer, die von mehreren Lehrkräften unterrichtet werden, werden auch mehrfach aufgeführt. Es kann wahlweise die Eintragung nur von einer Lehrkraft vorgenommen worden sein oder es muss bei allen Lehrkräften dieselbe Noten eingetragen worden sein.
+<br><br>
+Aus Datenschutzgründen kann die Liste natürlich nicht unverschlüsselt gesendet werden. Das Kennwort ist unsere leicht abgewandelte Schulnummer. Sie finden das Kennwort <a href='https://bk-borken.lms.schulon.org/course/view.php?id=415'>hier</a>. <br><br>Frohe Ostern!<br><br>Stefan Bäumer<br><br>PS: Weil diese Mail samt Inhalt automatisch erstellt und versandt wurde, ist der (angekündigte) Versand der Liste über den Messenger so nicht möglich.", new List<string>() { Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf" });
 
-Aus Datenschutzgründen kann die Liste natürlich nicht unverschlüsselt gesendet werden. Das Kennwort ist unsere leicht abgewandelte Schulnummer. Sie finden das Kennwort <a href='https://bk-borken.lms.schulon.org/course/view.php?id=415'>hier</a>. <br><br>Frohe Ostern<br><br>Stefan Bäumer<br><br>PS: Weil diese Mail samt Inhalt automatisch erstellt und versandt wurde, ist der (angekündigte) Versand der Liste über den Messenger so nicht möglich.", new List<string>() { Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".zip" });
-
-            Console.WriteLine(" ... ok");
+            File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".zip");
+            File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".pdf");
+            File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf");
+            Console.WriteLine(" ok");
         }
 
         public void CompressDirectory(List<string> filenames, string OutputFilePath, int CompressionLevel = 9)

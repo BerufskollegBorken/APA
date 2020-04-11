@@ -92,7 +92,7 @@ WHERE (((SCHOOLYEAR_ID)= " + Global.AktSjUnt + ") AND  ((TERM_ID)=" + periodes.C
 
                     List<Schueler> schuelerMitDoppelterNote = new List<Schueler>();
 
-                    // Fpr jeden Schüler dieses Lehrers wird geprüft, ob das selbe Fach 2x bewertet wurde.
+                    // Für jeden Schüler dieses Lehrers wird geprüft, ob das selbe Fach 2x bewertet wurde.
 
                     //foreach (var s in (from s in schuelers from f in s.Fächer where f.Lehrerkürzel == lehrer.Kürzel select s).ToList())
                     //{
