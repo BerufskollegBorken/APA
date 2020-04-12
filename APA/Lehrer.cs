@@ -42,22 +42,19 @@ namespace APA
                 Url = new Uri("https://ex01.bkb.local/EWS/Exchange.asmx")
             };
             EmailMessage message = new EmailMessage(exchangeService);
-                        
+
             message.ToRecipients.Add(this.Mail);
-            
+
             message.BccRecipients.Add("stefan.baeumer@berufskolleg-borken.de");
 
             message.Subject = "Fehlende Vornoten";
 
-            message.Body = @"Guten Tag " + this.Vorname + " " + this.Nachname +"," +
+            message.Body = @"Guten Tag " + this.Vorname + " " + this.Nachname + "," +
                 "<br>" +
+                                "<br>" +
                 "Sie erhalten diese Mail, weil für folgende Schülerinnen und Schüler bisher keine Vornoten eingetragen wurden:" +
-                "<br><table>";
-            if (this.Vorname == "Roland")
-            {
-                string a = "";
-            }
-            try
+                                "<br>" + 
+                                "<br><table>";
             {
                 foreach (var schueler in (from ss in schuelerOhneNoten select ss).OrderBy(x => x.Klasse.NameUntis).ThenBy(x => x.Nachname))
                 {
@@ -72,19 +69,14 @@ namespace APA
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
 
-                throw;
-            }
-            
-            message.Body += @"</table>
+                message.Body += @"</table>
 <br>Sofern Sie noch eintragen müssen, holen Sie das bis spätestens 13.04.20 um 24 Uhr im Digitalen Klassenbuch nach.<br><br>Mit kollegialem Gruß<br>Stefan Bäumer";
 
-            //message.SendAndSaveCopy();
-            message.Save(WellKnownFolderName.Drafts);
-            Console.WriteLine("            " + message.Subject + " " + this.Kürzel + " ... per Mail gesendet.");
+                //message.SendAndSaveCopy();
+                message.Save(WellKnownFolderName.Drafts);
+                Console.WriteLine("            " + message.Subject + " " + this.Kürzel + " ... per Mail gesendet.");
+            }
         }
     }
 }

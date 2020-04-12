@@ -6,6 +6,8 @@ namespace APA
 {
     public class Periodes : List<Periode>
     {
+        public int AktuellePeriode { get; private set; }
+
         public Periodes()
         {
             using (OleDbConnection oleDbConnection = new OleDbConnection(Global.ConU))
@@ -81,7 +83,5 @@ WHERE (((Terms.SCHOOLYEAR_ID)= " + Global.AktSjUnt + ")  AND ((Terms.SCHOOL_ID)=
                 }
             }
         }
-
-        public int AktuellePeriode { get; private set; }
     }
 }

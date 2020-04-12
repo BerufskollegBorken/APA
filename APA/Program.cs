@@ -25,8 +25,7 @@ namespace APA
                 var schuelers = new Schuelers(klss, lehs);                
                 schuelers.Unterrichte();                  
                 klss.Notenlisten(schuelers, lehs);
-                lehs.FehlendeUndDoppelteEinträge(schuelers);
-                Console.WriteLine("Fertig");
+                lehs.FehlendeUndDoppelteEinträge(schuelers);                
                 System.Diagnostics.Process.Start(Global.Ziel);
             }
             catch (IOException ex)

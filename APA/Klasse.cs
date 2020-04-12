@@ -21,7 +21,11 @@ namespace APA
         public string Jahrgang { get; internal set; }
         public DateTime ErsterSchultag { get; internal set; }
 
-        internal void Notenliste(Application application, Workbook workbook, List<Schueler> schuelers, Lehrers lehrers)
+        internal void Notenliste(
+            Application application,
+            Workbook workbook,
+            List<Schueler> schuelers,
+            Lehrers lehrers)
         {
             var ms = new MemoryStream();
             TextWriter tw = new StreamWriter(ms);
@@ -107,7 +111,7 @@ namespace APA
                     worksheet.Cells[zeileObenLinks + 2, spalteObenlinks + 2 + x] = fach.KürzelUntis;
 
                     worksheet.Cells[zeileObenLinks + 3, spalteObenlinks + 2 + x] = fach.Note == null ? "" : fach.Note.Substring(0, Math.Min(fach.Note.Length, 1));
-                    
+
                     if (NameUntis.Contains("13"))
                     {
                         worksheet.Cells[zeileObenLinks + 3, spalteObenlinks + 2 + x] = fach.Note;
@@ -118,7 +122,7 @@ namespace APA
                 zeileObenLinks = zeileObenLinks + 12;
             }
 
-            Console.Write("Nach PDF umwandeln ... ");            
+            Console.Write("Nach PDF umwandeln ... ");
             worksheet.ExportAsFixedFormat(
                 XlFixedFormatType.xlTypePDF,
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis,
@@ -135,15 +139,8 @@ namespace APA
 
             PdfSecuritySettings securitySettings = document.SecuritySettings;
 
-            // Setting one of the passwords automatically sets the security level to 
-            // PdfDocumentSecurityLevel.Encrypted128Bit.
             securitySettings.UserPassword = "!7765Neun";
-            securitySettings.OwnerPassword = "owner";
-
-            // Don't use 40 bit encryption unless needed for compatibility reasons
-            //securitySettings.DocumentSecurityLevel = PdfDocumentSecurityLevel.Encrypted40Bit;
-
-            // Restrict some rights.
+            securitySettings.OwnerPassword = "!7765Neun";
             securitySettings.PermitAccessibilityExtractContent = false;
             securitySettings.PermitAnnotations = false;
             securitySettings.PermitAssembleDocument = false;
@@ -153,15 +150,7 @@ namespace APA
             securitySettings.PermitModifyDocument = true;
             securitySettings.PermitPrint = false;
 
-            // Save the document...
             document.Save(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf");
-            
-            //Console.Write("Pdf komprimieren ... ");
-            //CompressDirectory(
-            //    new List<string>() { Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".pdf" },
-            //    Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\");
-            
-            //Console.Write("Mail senden ...");
 
             string kla = "";
 
@@ -171,8 +160,8 @@ namespace APA
             }
 
             Global.MailSenden(
-                this, 
-                "Notenliste " + NameUntis + " für " + kla ,
+                this,
+                "Notenliste " + NameUntis + " für " + kla,
                 @"Guten Morgen " + kla + @"<br><br>
 zur Vorbereitung auf die Zulassungskonferenz der Klasse " + NameUntis + @" am 21.4.20 erhalten Sie die Liste der Noten Ihrer Klasse.
 <br>
@@ -189,46 +178,6 @@ Aus Datenschutzgründen kann die Liste natürlich nicht unverschlüsselt gesende
             File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".pdf");
             File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf");
             Console.WriteLine(" ok");
-        }
-
-        public void CompressDirectory(List<string> filenames, string OutputFilePath, int CompressionLevel = 9)
-        {
-            try
-            {
-                using (ZipOutputStream OutputStream = new ZipOutputStream(File.Create(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".zip")))
-                {
-                    OutputStream.SetLevel(CompressionLevel);
-                    OutputStream.Password = "!7765Neun";
-
-                    byte[] buffer = new byte[4096];
-
-                    foreach (string file in filenames)
-                    {
-                        ZipEntry entry = new ZipEntry(Path.GetFileName(file))
-                        {
-                            DateTime = DateTime.Now
-                        };
-                        OutputStream.PutNextEntry(entry);
-
-                        using (FileStream fs = File.OpenRead(file))
-                        {
-                            int sourceBytes;
-
-                            do
-                            {
-                                sourceBytes = fs.Read(buffer, 0, buffer.Length);
-                                OutputStream.Write(buffer, 0, sourceBytes);
-                            } while (sourceBytes > 0);
-                        }
-                    }
-                    OutputStream.Finish();
-                    OutputStream.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception during processing {0}", ex);
-            }
         }
     }
 }
