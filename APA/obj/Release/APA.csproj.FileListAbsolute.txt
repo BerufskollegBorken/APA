@@ -3,3 +3,4 @@
 \\fs01\Schulverwaltung\APA\APA.pdb
 U:\Source\Repos\APA\APA\obj\Release\APA.exe
 U:\Source\Repos\APA\APA\obj\Release\APA.pdb
+U:\Source\Repos\APA\APA\obj\Release\APA.csprojResolveAssemblyReference.cache

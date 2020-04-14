@@ -151,6 +151,14 @@ namespace APA
             }
         }
 
+        public static DateTime Zulassungskonferenz
+        {
+            get
+            {                
+                return new DateTime(2020,04,21);
+            }
+        }
+
         public static string Titel {
             get
             {
@@ -158,14 +166,38 @@ namespace APA
             }
         }
 
+        public static string Clipboard = "Datum\tUhrzeit\tvon-bis\tKlasse\t\tvon\tbis\tRaum\tTeilnehmer\tKategorie\t\t\t" + "" + Environment.NewLine;
+        
         public static List<string> AbschlussKlassen
         {
             get
             {
-                //return new List<string>() { "HHO", "HBTO", "HBFGO", "BSO", "12" };
-                return new List<string>() { "GE13", "GW13", "GT13" };
+                return new List<string>() { "HHO", "HBTO", "HBFGO", "BSO", "12" };
+                //return new List<string>() { "GE13", "GW13", "GT13" };
             }
         }
+
+        public static List<KeyValuePair<string, DateTime>> ApaUhrzeiten
+        {
+            get
+            {
+                var list = new List<KeyValuePair<string, DateTime>>();
+                list.Add(new KeyValuePair<string, DateTime>("HHO1", new DateTime(2020, 4, 21, 11, 05, 0)));
+                list.Add(new KeyValuePair<string, DateTime>("HHO2", new DateTime(2020, 4, 21, 10, 15, 0)));
+                list.Add(new KeyValuePair<string, DateTime>("HHO3", new DateTime(2020, 4, 21, 10, 05, 0)));
+                list.Add(new KeyValuePair<string, DateTime>("HBFGO1", new DateTime(2020, 4, 21, 9, 55, 0)));
+                list.Add(new KeyValuePair<string, DateTime>("HBFGO2", new DateTime(2020, 4, 21, 9, 45, 0)));
+                list.Add(new KeyValuePair<string, DateTime>("BSO", new DateTime(2020, 4, 21, 9, 35, 0)));
+                list.Add(new KeyValuePair<string, DateTime>("12S1", new DateTime(2020, 4, 21, 9, 15, 0)));
+                list.Add(new KeyValuePair<string, DateTime>("12S2", new DateTime(2020, 4, 21, 9, 25, 0)));
+                list.Add(new KeyValuePair<string, DateTime>("HBTO", new DateTime(2020, 4, 21, 9, 5, 0)));
+                list.Add(new KeyValuePair<string, DateTime>("12M", new DateTime(2020, 4, 21, 8, 55, 0)));
+                return list;
+            }
+        }
+
+
+        public static object RaumApa = "1101";
 
         public static DateTime APA = new DateTime(2020, 04, 21);
 
@@ -205,7 +237,35 @@ namespace APA
             Console.ReadKey();
         }
 
-        internal static void MailSenden(Klasse to, string subject, string body, List<string> fileNames)
+        internal static string RenderVerantwortliche(List<Lehrer> klassenleitung)
+        {
+            var x = "";
+
+            foreach (var item in klassenleitung)
+            {
+
+                string url = "https://www.berufskolleg-borken.de/das-kollegium/#Bild";
+
+                // Wenn der Lehrende nicht in einer Verteilergruppe ist, 
+
+                if (klassenleitung.IndexOf(item) == 0)
+                {
+                    x += "<b><nobr><a title='Nachricht für " + GetAnrede(((Lehrer)item)) + "' href='mailto: " + ((Lehrer)item).Mail + " ?subject=Nachricht für " + GetAnrede((Lehrer)item) + "'>" + ((Lehrer)item).Anrede + " " + (((Lehrer)item).Titel == "" ? "" : " " + ((Lehrer)item).Titel) + " " + ((Lehrer)item).Nachname + "</b></nobr></a> <br>";
+                }
+                else
+                {
+                    x += "<b><nobr><a title='Nachricht für " + GetAnrede(((Lehrer)item)) + "' href='mailto: " + ((Lehrer)item).Mail + " ?subject=Nachricht für " + GetAnrede((Lehrer)item) + "'>" + ((Lehrer)item).Anrede + " " + (((Lehrer)item).Titel == "" ? "" : " " + ((Lehrer)item).Titel) + " " + ((Lehrer)item).Nachname + "</b></nobr></a> <br>";
+                }
+            }
+            return x.TrimEnd(' ');
+        }
+
+        public static string GetAnrede(Lehrer lehrer)
+        {
+            return (lehrer.Anrede == "Frau" ? "Frau" : "Herrn") + " " + lehrer.Titel + (lehrer.Titel == "" ? "" : " ") + lehrer.Nachname;
+        }
+
+        internal static void MailSenden(Klasse to, Lehrer bereichsleiter, string subject, string body, List<string> fileNames)
         {
             ExchangeService exchangeService = new ExchangeService()
             {
@@ -223,7 +283,7 @@ namespace APA
                     message.ToRecipients.Add(item.Mail);
                 }                
             }
-            
+            message.CcRecipients.Add(to.Bereichsleitung);
             message.BccRecipients.Add("stefan.baeumer@berufskolleg-borken.de");
 
             message.Subject = subject;

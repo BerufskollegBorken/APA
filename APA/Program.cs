@@ -8,6 +8,7 @@ namespace APA
 {
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             System.Net.ServicePointManager.ServerCertificateValidationCallback = ((sender, certificate, chain, sslPolicyErrors) => true);
@@ -27,6 +28,8 @@ namespace APA
                 klss.Notenlisten(schuelers, lehs);
                 lehs.FehlendeUndDoppelteEinträge(schuelers);                
                 System.Diagnostics.Process.Start(Global.Ziel);
+                System.Windows.Forms.Clipboard.SetText(Global.Clipboard);
+                Console.WriteLine("Tabelle ZulassungskonferenzBC in Zwischenablage geschrieben.");
             }
             catch (IOException ex)
             {
