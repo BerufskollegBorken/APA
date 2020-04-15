@@ -23,11 +23,13 @@ namespace APA
                 var fchs = new Fachs();
                 var lehs = new Lehrers(prds);
                 var klss = new Klasses(lehs, prds);
-                var schuelers = new Schuelers(klss, lehs);                
+                var schuelers = new Schuelers(klss, lehs);
+                Excelzeilen excelzeilen = new Excelzeilen();
                 schuelers.Unterrichte();                  
-                klss.Notenlisten(schuelers, lehs);
+                excelzeilen.AddRange(klss.Notenlisten(schuelers, lehs));
+                excelzeilen.ToExchange(lehs);
                 lehs.FehlendeUndDoppelteEinträge(schuelers);                
-                System.Diagnostics.Process.Start(Global.Ziel);
+                System.Diagnostics.Process.Start(Global.Ziel);                
                 System.Windows.Forms.Clipboard.SetText(Global.Clipboard);
                 Console.WriteLine("Tabelle ZulassungskonferenzBC in Zwischenablage geschrieben.");
             }

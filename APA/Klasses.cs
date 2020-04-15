@@ -91,8 +91,10 @@ WHERE (((Class.SCHOOL_ID)=177659) AND ((Class.TERM_ID)=" + periodes.Count + ") A
         {
         }
 
-        internal void Notenlisten(Schuelers schuelers, Lehrers lehrers)
+        public Excelzeilen Notenlisten(Schuelers schuelers, Lehrers lehrers)
         {
+            Excelzeilen excelzeilen = new Excelzeilen();
+
             string quelle = "APA.xlsx";
             
             System.IO.File.Copy(quelle, Global.Ziel, true);
@@ -103,21 +105,23 @@ WHERE (((Class.SCHOOL_ID)=177659) AND ((Class.TERM_ID)=" + periodes.Count + ") A
             {
                 foreach (var klasse in this)
                 {
-                    klasse.Notenliste(application, workbook, (from s in schuelers
+                    excelzeilen.Add(klasse.Notenliste(application, workbook, (from s in schuelers
                                                               where s.Klasse.NameUntis == klasse.NameUntis
-                                                              select s).ToList(), lehrers);
+                                                              select s).ToList(), lehrers));
                 }
+                return excelzeilen;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex);                
             }
             finally
             {
                 workbook.Save();
                 workbook.Close();
-                application.Quit();
-            }    
+                application.Quit();                
+            }
+            return null;
         }
     }
 }

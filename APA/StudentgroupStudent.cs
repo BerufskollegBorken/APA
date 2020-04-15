@@ -1,6 +1,7 @@
 ﻿using Microsoft.Office.Interop.Excel;
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace APA
 {
@@ -14,7 +15,7 @@ namespace APA
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
 
-        public StudentgroupStudent(string line)
+        public StudentgroupStudent(string line, ExportLessons exortlessons)
         {
             var x = line.Split('\t');
             StudentId = Convert.ToInt32(x[0]);
@@ -22,8 +23,8 @@ namespace APA
             Forename = x[2];
             Studentgroup = x[3];
             Subject = x[4];
-            StartDate = GetDatum(x[5]);
-            EndDate = GetDatum(x[6]);
+            StartDate = (from e in exortlessons where e.Studentgroup == Studentgroup select e.StartDate).FirstOrDefault();
+            EndDate = (from e in exortlessons where e.Studentgroup == Studentgroup select e.EndDate).FirstOrDefault();
         }
                 
         private DateTime GetDatum(string datumString)

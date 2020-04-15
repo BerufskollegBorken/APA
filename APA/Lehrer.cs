@@ -17,9 +17,11 @@ namespace APA
         public string Raum { get; internal set; }
         public string Funktion { get; internal set; }
         public string Dienstgrad { get; internal set; }
+        public Excelzeilen Excelzeilen { get; internal set; }
 
         public Lehrer(string anrede, string vorname, string nachname, string kürzel, string mail, string raum)
         {
+            Excelzeilen = new Excelzeilen();
             Anrede = anrede;
             Nachname = nachname;
             Vorname = vorname;
@@ -30,6 +32,7 @@ namespace APA
 
         public Lehrer()
         {
+            Excelzeilen = new Excelzeilen();
         }
 
         internal void Mailen(List<Schueler> schuelerOhneNoten, List<Schueler> schuelerMitDoppelterNote)
@@ -77,6 +80,19 @@ namespace APA
                 message.Save(WellKnownFolderName.Drafts);
                 Console.WriteLine("            " + message.Subject + " " + this.Kürzel + " ... per Mail gesendet.");
             }
+        }
+
+        internal void ToExchange(ExchangeService service)
+        {
+            service.ImpersonatedUserId = new ImpersonatedUserId(ConnectingIdType.SmtpAddress, this.Mail);
+
+            Appointments appointmentsIst = new Appointments(this.Mail, service);
+
+            Appointments appointmentsSoll = new Appointments(Excelzeilen, service);
+
+            appointmentsIst.DeleteAppointments(appointmentsSoll);
+
+            appointmentsSoll.AddAppointments(appointmentsIst, this, service);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Exchange.WebServices.Data;
+using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.Linq;
@@ -73,7 +74,7 @@ WHERE (((SCHOOLYEAR_ID)= " + Global.AktSjUnt + ") AND  ((TERM_ID)=" + periodes.C
                 }
             }
         }
-
+        
         internal void FehlendeUndDoppelteEinträge(Schuelers schuelers)
         {
             foreach (var lehrer in this)

@@ -6,7 +6,7 @@ namespace APA
 {
     public class StudentgroupStudents : List<StudentgroupStudent>
     {
-        public StudentgroupStudents()
+        public StudentgroupStudents(ExportLessons exportlesson)
         {
             using (StreamReader reader = new StreamReader(Global.InputStudentgroupStudentsCsv))
             {
@@ -18,8 +18,11 @@ namespace APA
 
                     if (line != null)
                     {
-                        StudentgroupStudent studentgroupStudent = new StudentgroupStudent(line);
-                        this.Add(studentgroupStudent);
+                        StudentgroupStudent studentgroupStudent = new StudentgroupStudent(line, exportlesson);
+                        if (studentgroupStudent.StartDate < DateTime.Now)
+                        {
+                            this.Add(studentgroupStudent);
+                        }                        
                     }
 
                     if (line == null)

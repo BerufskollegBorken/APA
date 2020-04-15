@@ -19,3 +19,5 @@ U:\Source\Repos\APA\APA\bin\Debug\PdfSharp.xml
 U:\Source\Repos\APA\APA\bin\Debug\PdfSharp.Charting.xml
 U:\Source\Repos\APA\APA\bin\Debug\de\PdfSharp.resources.dll
 U:\Source\Repos\APA\APA\bin\Debug\de\PdfSharp.Charting.resources.dll
+U:\Source\Repos\APA\APA\bin\Debug\Excelzeilen.dll
+U:\Source\Repos\APA\APA\bin\Debug\Excelzeilen.pdb

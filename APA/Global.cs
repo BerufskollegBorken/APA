@@ -151,6 +151,24 @@ namespace APA
             }
         }
 
+        public static DateTime LetzterTagDesSchuljahres
+        {
+            get
+            {
+                int sj = (DateTime.Now.Month >= 8 ? DateTime.Now.Year +1 : DateTime.Now.Year);
+                return new DateTime(sj,7,31);
+            }
+        }
+
+        public static DateTime ErsterTagDesSchuljahres
+        {
+            get
+            {
+                int sj = (DateTime.Now.Month >= 8 ? DateTime.Now.Year : DateTime.Now.Year - 1);
+                return new DateTime(sj, 08, 1);
+            }
+        }
+
         public static DateTime Zulassungskonferenz
         {
             get
@@ -166,7 +184,7 @@ namespace APA
             }
         }
 
-        public static string Clipboard = "Datum\tUhrzeit\tvon-bis\tKlasse\t\tvon\tbis\tRaum\tTeilnehmer\tKategorie\t\t\t" + "" + Environment.NewLine;
+        public static string Clipboard = "Datum\tvon-bis\tDatum/Zeit\tKlasse\t\tvon\tbis\tRaum\tTeilnehmer\tKategorie\t\t\t" + "" + Environment.NewLine;
         
         public static List<string> AbschlussKlassen
         {
@@ -196,8 +214,11 @@ namespace APA
             }
         }
 
+        public static List<string> ZuIgnorierendeFächer = new List<string>() { "GPF2", "GPF3" };
 
-        public static object RaumApa = "1101";
+        public static string KürzelSchulleiter = "SUE";
+
+        public static string RaumApa = "1015";
 
         public static DateTime APA = new DateTime(2020, 04, 21);
 

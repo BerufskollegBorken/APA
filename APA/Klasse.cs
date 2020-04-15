@@ -22,7 +22,7 @@ namespace APA
         public DateTime ApaBeginnUhrzeit { get; private set; }
         public DateTime ApaEndeUhrzeit { get; private set; }
 
-        internal void Notenliste(
+        internal Excelzeile Notenliste(
             Application application,
             Workbook workbook,
             List<Schueler> schuelers,
@@ -46,7 +46,7 @@ namespace APA
             // Lehrer auf dem Deckblatt auflisten
 
             int z = 16;
-            
+
             foreach (var lehrerkürzel in (from s in schuelers from f in s.Fächer orderby f.Lehrerkürzel select f.Lehrerkürzel).Distinct())
             {
                 worksheet.Cells[z, 2] = (from l in lehrers where l.Kürzel == lehrerkürzel select l.Nachname + ", " + l.Vorname).FirstOrDefault();
@@ -64,8 +64,13 @@ namespace APA
                 worksheet.Cells[z, 6] = ff.TrimEnd(',');
                 z++;
             }
-            
+
             Worksheet vorlage = workbook.Sheets["Liste"];
+
+            if (NameUntis == "BSO")
+            {
+                vorlage = workbook.Sheets["Liste-BSO"];
+            }
 
             vorlage.Copy(Type.Missing, workbook.Sheets[workbook.Sheets.Count]);
             workbook.Sheets[workbook.Sheets.Count].Name = NameUntis + "-L";
@@ -79,7 +84,7 @@ namespace APA
             worksheet.Cells[1, 1] = "Klasse: " + this.NameUntis;
             worksheet.Cells[1, 19] = "Klassenleitung: " + this.Klassenleitungen[0].Vorname + " " + this.Klassenleitungen[0].Nachname + " " + this.Klassenleitungen[0].Mail;
             worksheet.Cells[1, 19] = "Schuljahr: " + Global.AktSjAtl;
-            worksheet.Cells.Font.Size = 12;
+            //worksheet.Cells.Font.Size = 12;
 
             int zeileObenLinks = 3;
             int spalteObenlinks = 1;
@@ -125,7 +130,7 @@ namespace APA
 
             var teilnehmer = new List<Lehrer>
             {
-                (from l in lehrers where l.Kürzel == "SUE" select l).FirstOrDefault(),
+                (from l in lehrers where l.Kürzel == Global.KürzelSchulleiter select l).FirstOrDefault(),
                 (from l in lehrers where l.Kürzel == this.Bereichsleitung select l).FirstOrDefault()
             };
             teilnehmer.AddRange(this.Klassenleitungen);
@@ -137,23 +142,6 @@ namespace APA
                 kla += item.Vorname + " " + item.Nachname + ",";
             }
 
-            var beginn = (from g in Global.ApaUhrzeiten where g.Key == this.NameUntis select g.Value).FirstOrDefault();
-            
-            Global.Clipboard += 
-                Global.Zulassungskonferenz + 
-                "\t" + string.Format("{0:ddd}", beginn) + " " + beginn.ToString("dd.MM.yyyy") + 
-                "\t" + string.Format("{0:ddd}", beginn) + " " + beginn.ToString("dd.MM.yyyy") + "<br>" + beginn.ToShortTimeString() + " Uhr"+ 
-                "\t" + "Zulassungskonferenz - <a title='Nachricht für " + Global.GetAnrede((this).Klassenleitungen[0]) + "' href='mailto: " + (this).Klassenleitungen[0].Mail + " ?subject=Nachricht für " + Global.GetAnrede((this).Klassenleitungen[0]) + "'>" + "<b>" + (this).NameUntis + "</b></a> - " +  this.Beschreibung +
-                "\t" + "" + 
-                "\t" + beginn.ToString("HH:mm") + " " + 
-                "\t" + beginn.AddMinutes(10).ToString("HH:mm") + " " + 
-                "\t" + Global.RaumApa + 
-                "\t" + Global.RenderVerantwortliche(teilnehmer) + 
-                "\t" + "ZulassungskonferenzBC" + 
-                "\t" + "" + 
-                "\t" + "" + 
-                "\t" + "" + Environment.NewLine;
-            
             Console.Write("Nach PDF umwandeln ... ");
             worksheet.ExportAsFixedFormat(
                 XlFixedFormatType.xlTypePDF,
@@ -183,7 +171,25 @@ namespace APA
             securitySettings.PermitPrint = false;
 
             document.Save(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf");
-            
+
+            var beginn = (from g in Global.ApaUhrzeiten where g.Key == this.NameUntis select g.Value).FirstOrDefault();
+
+            Excelzeile excelzeile = new Excelzeile();
+            excelzeile.ADatum = Global.Zulassungskonferenz;
+            excelzeile.BTag = string.Format("{0:ddd}", beginn) + " " + beginn.ToString("dd.MM.yyyy");
+            excelzeile.CVonBis = new List<DateTime>() {beginn, beginn.AddMinutes(10) };
+            excelzeile.DBeschreibung = "Zulassungskonferenz - <a title='Nachricht für " + Global.GetAnrede((this).Klassenleitungen[0]) + "' href='mailto: " + (this).Klassenleitungen[0].Mail + " ?subject=Nachricht für " + Global.GetAnrede((this).Klassenleitungen[0]) + "'>" + "<b>" + (this).NameUntis + "</b></a> - " + this.Beschreibung;
+                excelzeile.EJahrgang = "";
+            excelzeile.FBeginn = beginn;
+            excelzeile.GEnde = beginn.AddMinutes(10);
+            excelzeile.HRaum = new Raums();
+            excelzeile.HRaum.Add(new Raum(Global.RaumApa));
+            excelzeile.IVerantwortlich = teilnehmer;
+            excelzeile.JKategorie = new List<string>() { "ZulassungskonferenzBC " };
+            excelzeile.KHinweise = "";
+            excelzeile.LGeschützt = "";
+            excelzeile.Subject = "Zulassungskonferenz " + NameUntis;
+                        
             Global.MailSenden(
                 this,
                 (from l in lehrers where l.Kürzel == this.Bereichsleitung select l).FirstOrDefault(),                
@@ -204,6 +210,7 @@ Aus Datenschutzgründen kann die Liste natürlich nicht unverschlüsselt gesende
             File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".pdf");
             File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf");
             Console.WriteLine(" ok");
+            return excelzeile;
         }
 
         private string RenderRaum(object raums, object raumApa)

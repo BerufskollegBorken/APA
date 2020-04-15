@@ -77,7 +77,7 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
         internal void Unterrichte()
         {
             ExportLessons exportLessons = new ExportLessons();
-            StudentgroupStudents studentgroupStudents = new StudentgroupStudents();
+            StudentgroupStudents studentgroupStudents = new StudentgroupStudents(exportLessons);
             Noten noten = new Noten();
                         
             Sortierung sortierung = new Sortierung();
@@ -93,6 +93,8 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
                                           && e.Teacher != ""
                                           && e.Subject != null
                                           && e.Subject != ""
+                                          && !Global.ZuIgnorierendeFächer.Contains(e.Subject)
+                                          && e.StartDate < DateTime.Now
                                           && e.Studentgroup == "")
                     {
                         // Wenn es noch keine Note für das Fach gibt
@@ -161,7 +163,8 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
                 {
                     if (s.StudentId == schueler.Id
                                           && s.Subject != null
-                                          && s.Subject != "")
+                                          && s.Subject != ""
+                                          && s.StartDate < DateTime.Now)
                     {
                         // Wenn es noch keine Note für das Fach gibt
 
@@ -174,6 +177,7 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
                                   where f.Lehrerkürzel == (from e in exportLessons
                                                            where e.Studentgroup == s.Studentgroup
                                                            where e.Subject == s.Subject
+                                                           where !Global.ZuIgnorierendeFächer.Contains(e.Subject)
                                                            select e.Teacher).FirstOrDefault()
                                   where f.KürzelUntis == s.Subject
                                   select f).Any())
@@ -227,7 +231,29 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
                             }
                         }
                     }
-                }                
+                }
+
+                // Prüfung, ob es noch Noten ohne Unterricht gibt. Das ist der Fall, wenn Fächer nach der Unterstuf nicht fortgeführt wurden.
+
+                foreach (var note in noten)
+                {
+                    if (note.StudentId == schueler.Id && (note.Fach.StartsWith("BI") || note.Fach.StartsWith("PH")))                                      
+                    {
+                        if (!(from f in schueler.Fächer where f.KürzelUntis == note.Fach select f).Any())
+                        {
+                            Console.WriteLine(schueler.Klasse.NameUntis + " " + schueler.Nachname + " hat eine Note in " + note.Fach + " bekommen, aber dieses Fach nicht im Unterricht.");
+
+                            schueler.Fächer.Add(new Fach(
+                                                  schueler.Id,
+                                                  schueler.Klasse.NameUntis,
+                                                  note.Fach + "*",
+                                                  note.LehrerKürzel,
+                                                  note,
+                                                  sortierung
+                                              ));
+                        }
+                    }                    
+                }
             }
         }
     }
