@@ -143,14 +143,17 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
                                       where f.Note == note.PrüfungsartNote
                                       select f).Any())
                                 {
-                                    schueler.Fächer.Add(new Fach(
-                                              schueler.Id,
-                                              schueler.Klasse.NameUntis,
-                                              e.Subject,
-                                              e.Teacher,
-                                              note,
-                                              sortierung
-                                          ));
+                                    if (e.StartDate < DateTime.Now)
+                                    {
+                                        schueler.Fächer.Add(new Fach(
+                                          schueler.Id,
+                                          schueler.Klasse.NameUntis,
+                                          e.Subject,
+                                          e.Teacher,
+                                          note,
+                                          sortierung
+                                      ));
+                                    }                                    
                                 }                                
                             }                            
                         }
@@ -182,7 +185,11 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
                                   where f.KürzelUntis == s.Subject
                                   select f).Any())
                             {
-                                schueler.Fächer.Add(new Fach(
+                                // Fächer, die erst in der Zukunft beginnen, weil Sie extra für die Prüfung angelegt wurde, werden ignoriert.
+
+                                if (s.StartDate < DateTime.Now)
+                                {
+                                    schueler.Fächer.Add(new Fach(
                                               schueler.Id,
                                               schueler.Klasse.NameUntis,
                                               s.Subject,
@@ -193,6 +200,7 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
                                               null,
                                               sortierung
                                           ));
+                                }                                
                             }   
                         }
 
@@ -219,7 +227,9 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
                                 {
                                     // ... angelegt.
 
-                                    schueler.Fächer.Add(new Fach(
+                                    if (s.StartDate < DateTime.Now)
+                                    {
+                                        schueler.Fächer.Add(new Fach(
                                                   schueler.Id,
                                                   schueler.Klasse.NameUntis,
                                                   s.Subject,
@@ -227,6 +237,7 @@ WHERE vorgang_schuljahr = '" + Global.AktSjAtl + "'", connection);
                                                   note,
                                                   sortierung
                                               ));
+                                    }                                    
                                 }                                
                             }
                         }

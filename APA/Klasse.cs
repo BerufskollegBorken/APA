@@ -81,9 +81,7 @@ namespace APA
             //worksheet.PageSetup.CenterHeader = "Abschlusskonferenz";
             //worksheet.PageSetup.RightHeader = DateTime.Now.ToLocalTime();
 
-            worksheet.Cells[1, 1] = "Klasse: " + this.NameUntis;
-            worksheet.Cells[1, 19] = "Klassenleitung: " + this.Klassenleitungen[0].Vorname + " " + this.Klassenleitungen[0].Nachname + " " + this.Klassenleitungen[0].Mail;
-            worksheet.Cells[1, 19] = "Schuljahr: " + Global.AktSjAtl;
+            worksheet.Cells[1, 1] = "Klasse: " + this.NameUntis + "         Klassenleitung: " + this.Klassenleitungen[0].Vorname + " " + this.Klassenleitungen[0].Nachname + "        " + "Schuljahr: " + Global.AktSjAtl;
             //worksheet.Cells.Font.Size = 12;
 
             int zeileObenLinks = 3;
@@ -108,11 +106,23 @@ namespace APA
                                       where f.KürzelUntis != ""
                                       where f.Lehrerkürzel != null
                                       where f.Lehrerkürzel != ""
-                                      where !f.KürzelUntis.EndsWith("FU")
+                                      where !f.KürzelUntis.EndsWith("FU")                                  
                                       select f).OrderBy(y => y.Nummer).Distinct().ToList())
                 {
                     worksheet.Cells[zeileObenLinks + 1, spalteObenlinks + 2 + x] = fach.Lehrerkürzel;
                     worksheet.Cells[zeileObenLinks + 2, spalteObenlinks + 2 + x] = fach.KürzelUntis;
+
+                    // Wenn der Schüler auch BWR hat, wird aus IF WI
+
+                    if (fach.KürzelUntis == "IF")
+                    {
+                        if ((from f in schueler.Fächer
+                             where f.KürzelUntis.StartsWith("BWR")
+                             select f.KürzelUntis).Any())
+                        {
+                            worksheet.Cells[zeileObenLinks + 2, spalteObenlinks + 2 + x] = "WI";
+                        }
+                    }
 
                     worksheet.Cells[zeileObenLinks + 3, spalteObenlinks + 2 + x] = fach.Note == null ? "" : fach.Note.Substring(0, Math.Min(fach.Note.Length, 1));
 
@@ -168,7 +178,7 @@ namespace APA
             securitySettings.PermitFormsFill = true;
             securitySettings.PermitFullQualityPrint = false;
             securitySettings.PermitModifyDocument = true;
-            securitySettings.PermitPrint = false;
+            securitySettings.PermitPrint = true;
 
             document.Save(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf");
 

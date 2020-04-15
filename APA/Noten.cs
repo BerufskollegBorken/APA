@@ -28,7 +28,7 @@ namespace APA
                             if ((from a in Global.AbschlussKlassen
                                  where note.Klasse != null
                                  where note.Klasse != null
-                                 where note.Klasse.StartsWith(a)
+                                 where note.Klasse.StartsWith(a)                               
                                  select a).Any())
                             {
                                 this.Add(note);

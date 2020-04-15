@@ -19,13 +19,9 @@ namespace APA
                     if (line != null)
                     {
                         ExportLesson exportLesson = new ExportLesson(line);
-
-                        // Unterrichte, die erst in der Zukunft beginnen (z.B. Prüfungen), bleiben unberücksichtigt  
-
-                        if (true)
-                        {
-                            this.Add(exportLesson);
-                        }                        
+                        
+                        this.Add(exportLesson);
+                                                
                     }
 
                     if (line == null)
