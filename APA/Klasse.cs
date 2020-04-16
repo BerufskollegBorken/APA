@@ -205,13 +205,12 @@ namespace APA
                 (from l in lehrers where l.Kürzel == this.Bereichsleitung select l).FirstOrDefault(),                
                 "Notenliste " + NameUntis + " für " + kla,
                 @"Guten Morgen " + kla + @"<br><br>
-zur Vorbereitung auf die Zulassungskonferenz der Klasse " + NameUntis + @" am " + string.Format("{0:ddd}", beginn) + " " + beginn.ToString("dd.MM.yyyy") + " - " + string.Format("{0:ddd}", beginn.AddMinutes(10)) + " " + beginn.ToString("dd.MM.yyyy") +  @" im Raum " + Global.RaumApa + @" erhalten Sie die Liste der Noten Ihrer Klasse.
+zur Vorbereitung auf die Zulassungskonferenz der Klasse " + NameUntis + @" am " + string.Format("{0:ddd}", beginn) + " " + beginn.ToString("dd.MM.yyyy") + @" im Raum " + Global.RaumApa + @" erhalten Sie die Liste der Noten Ihrer Klasse.
 <br>
 <br>
-Ihre Aufgabe ist es, fehlende Noten bei den Fachkolleginnen und Fachkollegen anzufordern. Die Noten müssen dann von der jeweiligen Lehrkraft bis spätestens 13.4.20 im DigiKlas eingetragen werden. Parallel zu Ihren Bemühungen werden automatisch Mails mit der Aufforderung zur Eintragung  verschickt. Am 13.4.20 um 24 Uhr wird die Änderung- / Neueingabemöglichkeit gesperrt.
-<br><br>
-Es werden Ihnen in der Liste alle Fächer angezeigt, die seit dem Schuljahresbeginn unterricht wurden. Das schließt auch diejenigen Fächer ein, die z.B. in der zweiten Woche nach den Ferien ersatzlos gestrichen wurden. Als Klassenleitung wissen Sie, wo entsprechend keine Noten erforderlich sind und wo noch Noten fehlen.  
-<br><br>
+Es werden Ihnen in der Liste alle Fächer angezeigt, die seit dem Schuljahresbeginn unterrichtet wurden. Das schließt auch diejenigen Fächer ein, die z.B. in der zweiten Woche nach den Ferien ersatzlos gestrichen wurden. Als Klassenleitung wissen Sie, wo entsprechend keine Noten erforderlich sind und wo noch Noten fehlen.  
+<br>
+<br>
 Fächer, die von mehreren Lehrkräften unterrichtet werden, werden auch mehrfach aufgeführt. Es kann wahlweise die Eintragung nur von einer Lehrkraft vorgenommen worden sein oder es muss bei allen Lehrkräften dieselbe Noten eingetragen worden sein.
 <br><br>
 Aus Datenschutzgründen kann die Liste natürlich nicht unverschlüsselt gesendet werden. Das Kennwort ist unsere leicht abgewandelte Schulnummer. Sie finden das Kennwort <a href='https://bk-borken.lms.schulon.org/course/view.php?id=415'>hier</a>. <br><br>Frohe Ostern!<br><br>Stefan Bäumer<br><br>PS: Weil diese Mail samt Inhalt automatisch erstellt und versandt wurde, ist der (angekündigte) Versand der Liste über den Messenger so nicht möglich.", new List<string>() { Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf" });

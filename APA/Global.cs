@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.IO;
-using System.Net.Mail;
 
 namespace APA
 {
@@ -180,7 +179,7 @@ namespace APA
         public static string Titel {
             get
             {
-                return @" APA | Published under the terms of GPLv3 | Stefan Bäumer 2020 | Version 20200412".PadRight(50, '=');
+                return @" APA | Published under the terms of GPLv3 | Stefan Bäumer 2020 | Version 20200416".PadRight(50, '=');
             }
         }
 
@@ -191,7 +190,6 @@ namespace APA
             get
             {
                 return new List<string>() { "HHO", "HBTO", "HBFGO", "BSO", "12" };
-                //return new List<string>() { "GE13", "GW13", "GT13" };
             }
         }
 
@@ -304,7 +302,7 @@ namespace APA
                     message.ToRecipients.Add(item.Mail);
                 }                
             }
-            message.CcRecipients.Add(to.Bereichsleitung);
+            message.CcRecipients.Add(bereichsleiter.Mail);
             message.BccRecipients.Add("stefan.baeumer@berufskolleg-borken.de");
 
             message.Subject = subject;
