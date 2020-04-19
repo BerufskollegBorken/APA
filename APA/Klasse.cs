@@ -28,9 +28,6 @@ namespace APA
             List<Schueler> schuelers,
             Lehrers lehrers)
         {
-            var ms = new MemoryStream();
-            TextWriter tw = new StreamWriter(ms);
-
             Console.Write(NameUntis.PadRight(6) + ": Excel-Notenliste erzeugen ... ");
 
             Worksheet deckblatt = workbook.Worksheets.get_Item(1);
@@ -152,6 +149,8 @@ namespace APA
                 kla += item.Vorname + " " + item.Nachname + ",";
             }
 
+            Global.Excel2Pdf(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis, NameUntis);
+
             Console.Write("Nach PDF umwandeln ... ");
             worksheet.ExportAsFixedFormat(
                 XlFixedFormatType.xlTypePDF,
@@ -163,7 +162,7 @@ namespace APA
                 Math.Ceiling((Double)schuelers.Count / 4.0),  // Letzte zu druckende Worksheetseite
                 false);
 
-            // Passowort protect pdf
+            // Passwort protect pdf
 
             PdfDocument document = PdfReader.Open(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".pdf");
 
@@ -213,10 +212,11 @@ Es werden Ihnen in der Liste alle Fächer angezeigt, die seit dem Schuljahresbeg
 <br>
 Fächer, die von mehreren Lehrkräften unterrichtet werden, werden auch mehrfach aufgeführt. Es kann wahlweise die Eintragung nur von einer Lehrkraft vorgenommen worden sein oder es muss bei allen Lehrkräften dieselbe Noten eingetragen worden sein.
 <br><br>
-Aus Datenschutzgründen kann die Liste natürlich nicht unverschlüsselt gesendet werden. Das Kennwort ist unsere leicht abgewandelte Schulnummer. Sie finden das Kennwort <a href='https://bk-borken.lms.schulon.org/course/view.php?id=415'>hier</a>. <br><br>Frohe Ostern!<br><br>Stefan Bäumer<br><br>PS: Weil diese Mail samt Inhalt automatisch erstellt und versandt wurde, ist der (angekündigte) Versand der Liste über den Messenger so nicht möglich.", new List<string>() { Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf" });
+Aus Datenschutzgründen kann die Liste natürlich nicht unverschlüsselt gesendet werden. Das Kennwort ist unsere leicht abgewandelte Schulnummer. Sie finden das Kennwort <a href='https://bk-borken.lms.schulon.org/course/view.php?id=415'>hier</a>. <br><br>Frohe Ostern!<br><br>Stefan Bäumer<br><br>PS: Weil diese Mail samt Inhalt automatisch erstellt und versandt wurde, ist der (angekündigte) Versand der Liste über den Messenger so nicht möglich.", new List<string>() {
+ Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf" });
 
             File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".zip");
-            File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".pdf");
+            //File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + ".pdf");
             File.Delete(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + NameUntis + "-Kennwort.pdf");
             Console.WriteLine(" ok");
             return excelzeile;

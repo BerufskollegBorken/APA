@@ -87,6 +87,20 @@ WHERE (((Class.SCHOOL_ID)=177659) AND ((Class.TERM_ID)=" + periodes.Count + ") A
             }
         }
 
+        internal List<string> Dokumente()
+        {
+            var x = new List<string>();
+
+            foreach (var item in (from k in this select Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\" + k.NameUntis + ".pdf"))
+            {
+                x.Add(item);
+            }
+
+            x.Add(Global.Ziel);
+
+            return x;
+        }
+
         public Klasses()
         {
         }

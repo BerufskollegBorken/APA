@@ -2,6 +2,7 @@
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Office.Interop.Excel;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace APA
@@ -29,9 +30,11 @@ namespace APA
                 excelzeilen.AddRange(klss.Notenlisten(schuelers, lehs));
                 excelzeilen.ToExchange(lehs);
                 lehs.FehlendeUndDoppelteEinträge(schuelers);                
-                System.Diagnostics.Process.Start(Global.Ziel);                
-                System.Windows.Forms.Clipboard.SetText(Global.Clipboard);
+                System.Diagnostics.Process.Start(Global.Ziel);
+                //Global.MailSenden(new Klasse(), new Lehrer(), "Liste alle Dokumente für den APA", "Siehe Anlage.", klss.Dokumente());
+                //System.Windows.Forms.Clipboard.SetText(excelzeilen.ToClipboard());
                 Console.WriteLine("Tabelle ZulassungskonferenzBC in Zwischenablage geschrieben.");
+                Console.ReadKey();
             }
             catch (IOException ex)
             {

@@ -212,6 +212,11 @@ namespace APA
             }
         }
 
+        internal static void Excel2Pdf(string v)
+        {
+            throw new NotImplementedException();
+        }
+
         public static List<string> ZuIgnorierendeFächer = new List<string>() { "GPF2", "GPF3" };
 
         public static string KürzelSchulleiter = "SUE";
@@ -294,17 +299,23 @@ namespace APA
                 Url = new Uri("https://ex01.bkb.local/EWS/Exchange.asmx")
             };
             EmailMessage message = new EmailMessage(exchangeService);
-
-            foreach (var item in to.Klassenleitungen)
+            try
             {
-                if (item.Mail != null && item.Mail != "")
+                foreach (var item in to.Klassenleitungen)
                 {
-                    message.ToRecipients.Add(item.Mail);
-                }                
+                    if (item.Mail != null && item.Mail != "")
+                    {
+                        message.ToRecipients.Add(item.Mail);
+                    }
+                }
+                message.CcRecipients.Add(bereichsleiter.Mail);
+                message.BccRecipients.Add("stefan.baeumer@berufskolleg-borken.de");
             }
-            message.CcRecipients.Add(bereichsleiter.Mail);
-            message.BccRecipients.Add("stefan.baeumer@berufskolleg-borken.de");
-
+            catch (Exception)
+            {
+                message.ToRecipients.Add("stefan.baeumer@berufskolleg-borken.de");
+            }
+            
             message.Subject = subject;
 
             message.Body = body;
@@ -312,6 +323,7 @@ namespace APA
             foreach (var datei in fileNames)
             {                
                 message.Attachments.AddFileAttachment(datei);
+                //File.Delete(datei);
             }
             
             //message.SendAndSaveCopy();
